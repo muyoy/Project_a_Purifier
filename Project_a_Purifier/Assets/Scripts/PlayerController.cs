@@ -2,42 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Unit
 {
-    //회피알고리즘 다시 짜야함
-    public enum State
-    {
-        Idle, Move, Attack, Dodge, Jump, Hit, Death
-    }
-    public State state;
-    public float speed;
     public float dodgespeed;
     public float jumpingPower;
 
-    private float horizontal;
     private bool isDodge = false;
-    private bool isFacingRight = true;
     private bool moveLeft = false;
     private bool moveRight = false;
     private bool DodgeLeft = false;
     private bool DodgeRight = false;
 
-    private Rigidbody2D rb;
-    private Animator animator;
-    private Transform groundcheck;
 
+    private Transform attackPoint;
+    private Transform groundcheck;
+    private Coroutine dodge = null;
+    public GameObject firePrefab;
     public LayerMask groundLayer;
 
-    private void Start()
+    protected override void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        base.Start();
         groundcheck = transform.GetChild(0).GetComponent<Transform>();
+        attackPoint = transform.GetChild(1).GetComponent<Transform>();
     }
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * Time.deltaTime, rb.velocity.y);
-        animator.SetFloat("Speed", Mathf.Abs(horizontal));
+        rb.velocity = new Vector2(horizon * Time.deltaTime, rb.velocity.y);
+        animator.SetFloat("Speed", Mathf.Abs(horizon));
     }
     private void Update()
     {
@@ -45,29 +37,31 @@ public class PlayerController : MonoBehaviour
         Filp();
     }
 
-    private void Movement()
+    protected override void Movement()
     {
         if (moveLeft)
         {
-            horizontal = -speed;
+            horizon = -moveSpeed;
         }
         else if (moveRight)
         {
-            horizontal = speed;
+            horizon = moveSpeed;
         }
         else if (DodgeLeft && !isDodge)
         {
-            horizontal = -dodgespeed;
+            horizon = -dodgespeed;
         }
         else if (DodgeRight)
         {
-            horizontal = dodgespeed;
+            horizon = dodgespeed;
         }
         else
         {
-            horizontal = 0;
+            horizon = 0;
         }
     }
+    #region UIButtonMove
+
     public void PointerDownLeft()
     {
         moveLeft = true;
@@ -85,7 +79,6 @@ public class PlayerController : MonoBehaviour
     {
         moveRight = false;
     }
-
     public void PointerDownJump()
     {
         if (IsGrounded())
@@ -93,20 +86,22 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector2.up * jumpingPower;
         }
     }
+    #endregion
+
     public void PointerDownAttack()
     {
         Debug.Log("Attack");
+        Instantiate(firePrefab, attackPoint.position, attackPoint.rotation);
     }
     public void PointerDownDodgeLeft()
     {
         Debug.Log("DodgeLeft");
         DodgeLeft = true;
-        StartCoroutine("Dodge");
+        dodge = StartCoroutine("Dodge");
     }
     public void PointerUpDodgeLeft()
     {
         Debug.Log("DodgeLeft");
-        StopCoroutine("Dodge");
         DodgeLeft = false;
     }
     public void PointerDownDodgeRight()
@@ -121,9 +116,11 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator Dodge()
     {
+        yield return new WaitForSeconds(0.2f);
         isDodge = true;
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(5f);
         isDodge = false;
+        yield return null;
     }
     private bool IsGrounded()
     {
@@ -131,7 +128,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Filp()
     {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        if (isFacingRight && horizon < 0f || !isFacingRight && horizon > 0f)
         {
             isFacingRight = !isFacingRight;
             transform.Rotate(0f, 180f, 0f);

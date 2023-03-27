@@ -530,9 +530,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1249981979}
-          m_TargetAssemblyTypeName: Attack, Assembly-CSharp
-          m_MethodName: Shoot
+        - m_Target: {fileID: 1249981977}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: PointerDownAttack
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -554,6 +554,7 @@ GameObject:
   - component: {fileID: 229854651}
   - component: {fileID: 229854650}
   - component: {fileID: 229854649}
+  - component: {fileID: 229854652}
   m_Layer: 5
   m_Name: RightDodge_Button
   m_TagString: Untagged
@@ -664,6 +665,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 229854647}
   m_CullTransparentMesh: 1
+--- !u!114 &229854652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229854647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1249981977}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: PointerDownDodgeRight
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1249981977}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: PointerUpDodgeRight
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &400208995
 GameObject:
   m_ObjectHideFlags: 0
@@ -979,6 +1025,7 @@ GameObject:
   - component: {fileID: 458156120}
   - component: {fileID: 458156119}
   - component: {fileID: 458156118}
+  - component: {fileID: 458156121}
   m_Layer: 5
   m_Name: LeftDodge_Button
   m_TagString: Untagged
@@ -1089,6 +1136,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 458156116}
   m_CullTransparentMesh: 1
+--- !u!114 &458156121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458156116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1249981977}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: PointerDownDodgeLeft
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1249981977}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: PointerUpDodgeLeft
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &691650482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1578,7 +1670,6 @@ GameObject:
   - component: {fileID: 1249981974}
   - component: {fileID: 1249981973}
   - component: {fileID: 1249981977}
-  - component: {fileID: 1249981979}
   - component: {fileID: 1249981978}
   m_Layer: 0
   m_Name: Main_Character
@@ -1706,9 +1797,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  speed: 220
+  isDead: 0
+  isMove: 0
+  isHit: 0
+  moveSpeed: 220
+  hp: 0
   dodgespeed: 300
   jumpingPower: 15
+  firePrefab: {fileID: 7590693140564807773, guid: 9ffc1b558b9893346aa92ffbbf4d94b0, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1732,20 +1828,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
---- !u!114 &1249981979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1249981972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe94244c5f2aae1478a006bd50866cb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firepoint: {fileID: 1703568406}
-  firePrefab: {fileID: 7590693140564807773, guid: 9ffc1b558b9893346aa92ffbbf4d94b0, type: 3}
 --- !u!1 &1264998870
 GameObject:
   m_ObjectHideFlags: 0
