@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class PlayerController : Unit
 {
-    public float dodgespeed;
+    public float stemia;
+    public float dodgepos;
+    public float dodgeSpeed;
+    public float rightDodgepos;
+    public float leftDodgepos;
     public float jumpingPower;
 
     private bool isDodge = false;
@@ -47,14 +51,6 @@ public class PlayerController : Unit
         {
             horizon = moveSpeed;
         }
-        else if (DodgeLeft && !isDodge)
-        {
-            horizon = -dodgespeed;
-        }
-        else if (DodgeRight)
-        {
-            horizon = dodgespeed;
-        }
         else
         {
             horizon = 0;
@@ -90,37 +86,47 @@ public class PlayerController : Unit
 
     public void PointerDownAttack()
     {
-        Debug.Log("Attack");
         Instantiate(firePrefab, attackPoint.position, attackPoint.rotation);
     }
     public void PointerDownDodgeLeft()
     {
-        Debug.Log("DodgeLeft");
         DodgeLeft = true;
         dodge = StartCoroutine("Dodge");
     }
     public void PointerUpDodgeLeft()
     {
-        Debug.Log("DodgeLeft");
         DodgeLeft = false;
     }
     public void PointerDownDodgeRight()
     {
-        Debug.Log("DodgeRight");
         DodgeRight = true;
+        dodge = StartCoroutine("Dodge");
     }
     public void PointerUpDodgeRight()
     {
-        Debug.Log("DodgeLeft");
         DodgeRight = false;
     }
     private IEnumerator Dodge()
     {
-        yield return new WaitForSeconds(0.2f);
-        isDodge = true;
-        yield return new WaitForSeconds(5f);
-        isDodge = false;
-        yield return null;
+        if (DodgeRight)
+        {
+            rightDodgepos = transform.position.x + dodgepos;
+            while (rightDodgepos - transform.position.x >= 0)
+            {
+                rb.position += Vector2.right * dodgeSpeed * Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        if (DodgeLeft)
+        {
+            leftDodgepos = transform.position.x - dodgepos;
+            while (leftDodgepos - transform.position.x <= 0)
+            {
+                rb.position += Vector2.left * dodgeSpeed * Time.deltaTime;
+                yield return null;
+            }
+        }
     }
     private bool IsGrounded()
     {
