@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Unit : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class Unit : MonoBehaviour
     protected GameObject target = null;
     protected Rigidbody2D rb;
     protected Animator animator;
-    protected float maxHp = 0.0f;
+    [SerializeField] protected Slider hpBar;         //hp UI
+    [SerializeField] protected float maxHp = 100.0f; //test 때문에 시리얼라이즈필드함
     protected float horizon; 
     [SerializeField] protected float moveSpeed = 0.0f; 
 
@@ -37,6 +39,14 @@ public class Unit : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+    }
+    public virtual void HpChange(float damage)
+    {
+        if(!isDead && !(state == State.Dodge))
+        {
+            Hp -= damage;
+            hpBar.value = hp / maxHp;
+        }
     }
 
     protected virtual void Init()
