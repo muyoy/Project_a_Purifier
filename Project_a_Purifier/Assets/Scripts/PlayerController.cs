@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerController : Unit
 {
-    [SerializeField] protected float stemia;    //점프중과 어택이 끝나고 idle 상태로 돌아오게 하기
+    [SerializeField] protected float stemia;    //피격상태 만들기
     protected virtual float Stemia
     {
         get { return stemia; }
@@ -60,6 +60,8 @@ public class PlayerController : Unit
     }
     private void Update()
     {
+        if(Input.GetKey(KeyCode.A))
+        { PointerDownAttack(); }
         Movement();
         Filp();
     }
@@ -116,18 +118,28 @@ public class PlayerController : Unit
     }
     public void PointerDownJump()
     {
-        if (IsGrounded())
+        if (IsGrounded() && !(state == State.Attack))
         {
             state = State.Jump;
             rb.velocity = Vector2.up * jumpingPower;
+            StartCoroutine("IdleCheck");
         }   
     }
     #endregion
 
     public void PointerDownAttack()
     {
-        state = State.Attack;
-        Instantiate(firePrefab, attackPoint.position, attackPoint.rotation);
+        if (!(state == State.Attack) && !(state == State.Jump) && !(state == State.Dodge))
+        {
+            if(state == State.Move)
+            {
+                moveLeft = false;
+                moveRight = false;              
+            }
+            state = State.Attack;
+            Instantiate(firePrefab, attackPoint.position, attackPoint.rotation);
+            StartCoroutine("IdleCheck");
+        }
     }
     public void PointerDownDodgeLeft()
     {
@@ -162,6 +174,24 @@ public class PlayerController : Unit
             yield return new WaitForSeconds(chargeCoolTime);
             SteamiaChange(1);
         }
+    }
+    private IEnumerator IdleCheck()
+    {
+        if (state == State.Jump)
+        {
+            while (rb.velocity.y != 0)
+            {
+                yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+            }
+        }
+        if (state == State.Attack)
+        {
+            animator.SetBool("isAttack", true);
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+            animator.SetBool("isAttack", false);
+        }
+        state = State.Idle;
     }
     private IEnumerator Dodge()
     {
@@ -212,11 +242,15 @@ public class PlayerController : Unit
             isfullCharge = true;
             stemia = MaxSteamia;
             StopCoroutine(charge);
+            charge = null;
         }
         else
         {
             isfullCharge = false;
-            charge = StartCoroutine("SteamiaCharge");
+            if (charge == null)
+            {
+                charge = StartCoroutine("SteamiaCharge");
+            }
         }
     }
     private bool IsGrounded()
