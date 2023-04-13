@@ -54,12 +54,15 @@ public class PlayerController : Unit
     }
     private void FixedUpdate()
     {
-        Movement();
-        Filp();
-        rb.velocity = new Vector2(horizon * Time.deltaTime, rb.velocity.y);
-        animator.SetFloat("Speed", Mathf.Abs(horizon));
-        animator.SetFloat("jumpSpeed", rb.velocity.y);
-        animator.SetBool("isGround", IsGrounded());
+        if (!isDead)
+        {
+            Movement();
+            Filp();
+            rb.velocity = new Vector2(horizon * Time.deltaTime, rb.velocity.y);
+            animator.SetFloat("Speed", Mathf.Abs(horizon));
+            animator.SetFloat("jumpSpeed", rb.velocity.y);
+            animator.SetBool("isGround", IsGrounded());
+        }
     }
     private void Update()
     {

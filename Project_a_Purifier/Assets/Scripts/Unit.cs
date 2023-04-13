@@ -62,6 +62,7 @@ public class Unit : MonoBehaviour
     protected virtual void Dead()
     {
         animator.SetBool("isDead", true);
+        isDead = true;
         if(gameObject.tag == "Player")
         {
 
