@@ -21,10 +21,12 @@ public class PlayerController : Unit
     public float chargeCoolTime;
     public float dodgepos;
     public float dodgeSpeed;
+    public float hitSpeed;
     public float rightDodgepos;
     public float leftDodgepos;
     public float jumpingPower;
-    private float dodgeTimer = 5.0f;
+    private float dodgeTimer = 2.0f;
+    private float hitTimer = 2.0f;
 
     private bool moveLeft = false;
     private bool moveRight = false;
@@ -97,11 +99,13 @@ public class PlayerController : Unit
         {
             hitKnock_Back = transform.position.x + HitKnock_Back_pos;
             animator.SetBool("isHit", true);
-            while (hitKnock_Back - transform.position.x >= 0)
+            while (hitTimer >= 0)
             {
                 moveLeft = false;
                 moveRight = false;
-                rb.position += Vector2.right * hitKnock_Back_speed * Time.deltaTime;
+                //rb.position += Vector2.right * hitKnock_Back_speed * Time.deltaTime;
+                rb.AddForce(new Vector2(hitSpeed * Time.deltaTime, rb.velocity.y), ForceMode2D.Force);
+                hitTimer = hitTimer - Time.deltaTime;
                 //rb.velocity = new Vector2(hitKnock_Back_speed * Time.deltaTime, rb.velocity.y);
                 yield return null;
             }
@@ -112,17 +116,20 @@ public class PlayerController : Unit
         {
             hitKnock_Back = transform.position.x - HitKnock_Back_pos;
             animator.SetBool("isHit", true);
-            while (hitKnock_Back - transform.position.x <= 0)
+            while (hitTimer >= 0)
             {
                 moveLeft = false;
                 moveRight = false;
-                rb.position += Vector2.left * hitKnock_Back_speed * Time.deltaTime;
+                //rb.position += Vector2.left * hitKnock_Back_speed * Time.deltaTime;
+                rb.AddForce(new Vector2(-hitSpeed * Time.deltaTime, rb.velocity.y), ForceMode2D.Force);
+                hitTimer = hitTimer - Time.deltaTime;
                 //rb.velocity = new Vector2(hitKnock_Back_speed * Time.deltaTime, rb.velocity.y);
                 yield return null;
             }
             yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
             animator.SetBool("isHit", false);
         }
+        hitTimer = 2.0f;
         state = State.Idle;
     }
 
@@ -154,13 +161,15 @@ public class PlayerController : Unit
     }
     public void PointerUpLeft()
     {
-        state = State.Idle;
-        moveLeft = false;
-        //if (state == State.Move)
-        //{
-        //    state = State.Idle;
-        //    moveLeft = false;
-        //}
+        if (state == State.Dodge || state == State.Attack)
+        {
+            return;
+        }
+        else
+        {
+            state = State.Idle;
+            moveLeft = false;
+        }
     }
 
     public void PointerDownRight()
@@ -172,13 +181,15 @@ public class PlayerController : Unit
     }
     public void PointerUpRight()
     {
-        state = State.Idle;
-        moveRight = false;
-        //if (state == State.Move)
-        //{
-        //    state = State.Idle;
-        //    moveRight = false;
-        //}
+        if (state == State.Dodge || state == State.Attack)
+        {
+            return;
+        }
+        else
+        {
+            state = State.Idle;
+            moveRight = false;
+        }
     }
     public void PointerDownJump()
     {
@@ -274,9 +285,9 @@ public class PlayerController : Unit
                 moveLeft = false;
                 moveRight = false;
                 //rb.position += Vector2.right * dodgeSpeed * Time.deltaTime;
-                dodgeTimer = dodgeTimer - Time.deltaTime;
                 Debug.Log(dodgeTimer);
                 rb.AddForce(new Vector2(dodgeSpeed * Time.deltaTime, rb.velocity.y), ForceMode2D.Force);
+                dodgeTimer = dodgeTimer - Time.deltaTime;
                 yield return null;
             }
             yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
@@ -296,15 +307,15 @@ public class PlayerController : Unit
             {
                 moveLeft = false;
                 moveRight = false;
-                dodgeTimer = dodgeTimer - Time.deltaTime;
                 Debug.Log(dodgeTimer);
                 rb.AddForce(new Vector2(-dodgeSpeed * Time.deltaTime, rb.velocity.y), ForceMode2D.Force);
+                dodgeTimer = dodgeTimer - Time.deltaTime;
                 yield return null;
             }
             yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
             animator.SetBool("isDodge", false);
         }
-        dodgeTimer = 5.0f;
+        dodgeTimer = 2.0f;
         state = State.Idle;
     }
     private void SteamiaChange(float usingstemia)

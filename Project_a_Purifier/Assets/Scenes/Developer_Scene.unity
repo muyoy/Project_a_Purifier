@@ -2107,6 +2107,7 @@ MonoBehaviour:
   chargeCoolTime: 5
   dodgepos: 5
   dodgeSpeed: 25
+  hitSpeed: 15000
   rightDodgepos: 0
   leftDodgepos: 0
   jumpingPower: 15
