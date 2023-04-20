@@ -8,8 +8,6 @@ public class Unit : MonoBehaviour
     public enum State { Idle, Move, Attack, Hit, Death, Dodge, Jump }
     public State state;
     public bool isDead;
-    public bool isMove;
-    public bool isHit;
     protected bool isFacingRight = true;
     protected GameObject target = null;
     protected Rigidbody2D rb;
