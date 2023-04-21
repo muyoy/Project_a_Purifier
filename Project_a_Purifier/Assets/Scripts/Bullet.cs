@@ -9,10 +9,12 @@ public class Bullet : MonoBehaviour
     private void Start()
     {
         rb.velocity = transform.right * speed;
+        Destroy(gameObject, 5f);
+        //Invoke("DestroyBullet", 5f);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void DestroyBullet()
     {
-        //Destroy(gameObject);
+        ObjectPool.ReturnObject(this);
     }
 }

@@ -40,11 +40,7 @@ public class Unit : MonoBehaviour
     }
     public virtual void HpChange(float damage)
     {
-        //if(!isDead && !(state == State.Dodge))
-        //{
-        //    Hp -= damage;
-        //    hpBar.value = hp / maxHp;
-        //}
+
     }
 
     protected virtual void Init()
@@ -60,10 +56,6 @@ public class Unit : MonoBehaviour
     protected virtual void Dead()
     {
         isDead = true;
-        animator.SetBool("isDead", true);
-        if(gameObject.tag == "Player")
-        {
-
-        }
+        animator.SetBool(HashCode.deadID, true);
     }
 }

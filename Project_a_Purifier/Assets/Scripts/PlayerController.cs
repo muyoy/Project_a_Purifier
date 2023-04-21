@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Pool;
+
 public class PlayerController : Unit
 {
-    [SerializeField] protected float stemia; //피격 벽박치기 예외처리, 최적화, 공격 오브젝트풀링 제작
+    [SerializeField] protected float stemia; //공격 오브젝트풀링 제작
     protected virtual float Stemia
     {
         get { return stemia; }
@@ -20,16 +22,14 @@ public class PlayerController : Unit
     private float maxSteamia = 10;
     public float chargeCoolTime;    //test
     public float jumpingPower;      //test
-    public float maprightend;      //test
+    public float mapEnd;      //test
 
     public float dodgepos;
     public float dodgeSpeed;
+    public float hitpos;
     public float hitSpeed;
-    public float rightDodgepos;
-    public float leftDodgepos;
 
-    private float dodgeTimer = 1.0f;
-    private float hitTimer = 1.0f;
+    private const float invincibilityTimer = 1.0f;
 
     private bool moveLeft = false;
     private bool moveRight = false;
@@ -47,9 +47,6 @@ public class PlayerController : Unit
     public LayerMask groundLayer;
     public Slider steamiabar;
 
-    private const int hash = -1736918096; // HashCode만 모아놓은 클라스 생성
-                                          //Debug.Log(Animator.StringToHash("isDodge"));
-
     protected override void Start()
     {
         base.Start();
@@ -65,9 +62,9 @@ public class PlayerController : Unit
             Movement();
             Filp();
             rb.velocity = new Vector2(horizon * Time.deltaTime, rb.velocity.y);
-            animator.SetFloat("Speed", Mathf.Abs(horizon));
-            animator.SetFloat("jumpSpeed", rb.velocity.y);
-            animator.SetBool("isGround", IsGrounded());
+            animator.SetFloat(HashCode.moveID, Mathf.Abs(horizon));
+            animator.SetFloat(HashCode.jumpID, rb.velocity.y);
+            animator.SetBool(HashCode.dropID, IsGrounded());
         }
 
         if(hp < 0)
@@ -76,11 +73,15 @@ public class PlayerController : Unit
             rb.velocity = Vector2.zero;
         }
     }
+    /// <summary>
+    /// 테스트용
+    /// </summary>
     private void Update()
     {
+
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            hit = StartCoroutine(HitKnock_Back());
+            hit = StartCoroutine(Invincibility_Time(hitpos, hitSpeed, HashCode.hitID, State.Hit));
         }
     }
     public override void HpChange(float damage)
@@ -91,51 +92,102 @@ public class PlayerController : Unit
             hpBar.value = hp / maxHp;
             if(hp > 0)
             {
-                hit = StartCoroutine(HitKnock_Back());
+                hit = StartCoroutine(Invincibility_Time(hitpos, hitSpeed, HashCode.hitID, State.Hit));
             }
         }
     }
-    private IEnumerator HitKnock_Back()
+
+    private IEnumerator Invincibility_Time(float position, float speed, int animationHashCode, State changeState)
     {
-        float hitKnock_Back = 0.0f;
-        float HitKnock_Back_pos = 1.0f;
-        float hitKnock_Back_speed = 30.0f;
-        if(!IsGrounded())
+        bool isRight = true;
+        float rightPostion = 0.0f;
+        float leftPostion = 0.0f;
+        if (changeState == State.Dodge)
         {
-            rb.velocity = Vector2.zero;
+            state = State.Dodge;
+            if (DodgeRight)
+            {
+                if(!isFacingRight)
+                {
+                    transform.Rotate(0f, 180f, 0f);
+                    isFacingRight = true;
+                    isRight = true;
+                }
+                else
+                {
+                    isRight = true;
+                }
+            }
+            else if(DodgeLeft)
+            {
+                if (isFacingRight)
+                {
+                    transform.Rotate(0f, 180f, 0f);
+                    isFacingRight = false;
+                    isRight = false;
+                }
+                else
+                {
+                    isRight = false;
+                }
+            }
         }
-        state = State.Hit;
-        if (!isFacingRight)
+        else if(changeState == State.Hit)
         {
-            hitKnock_Back = transform.position.x + HitKnock_Back_pos;
-            animator.SetBool("isHit", true);
-            while (hitKnock_Back - transform.position.x >= 0)
+            state = State.Hit;
+            if (!isFacingRight)
+            {
+                isRight = true;
+            }
+            else
+            {
+                isRight = false;
+            }
+
+            if (!IsGrounded())
+            {
+                rb.velocity = Vector2.zero;
+            }
+        }
+        if (isRight)
+        {
+            rightPostion = transform.position.x + position;
+            if (rightPostion > mapEnd)
+            {
+                rightPostion = mapEnd;
+            }
+            animator.SetBool(animationHashCode, true);
+            while (rightPostion - transform.position.x >= 0)
             {
                 moveLeft = false;
                 moveRight = false;
-                rb.position += Vector2.right * hitKnock_Back_speed * Time.deltaTime;
+                rb.position += Vector2.right * speed * Time.deltaTime;
                 yield return null;
             }
-            yield return new WaitForSeconds(hitTimer);
-            animator.SetBool("isHit", false);
+            yield return new WaitForSeconds(invincibilityTimer);
+            animator.SetBool(animationHashCode, false);
         }
         else
         {
-            hitKnock_Back = transform.position.x - HitKnock_Back_pos;
-            animator.SetBool("isHit", true);
-            while (hitKnock_Back - transform.position.x <= 0)
+            leftPostion = transform.position.x - position;
+            if (leftPostion < -mapEnd)
+            {
+                leftPostion = -mapEnd;
+            }
+            animator.SetBool(animationHashCode, true);
+            while (leftPostion - transform.position.x <= 0)
             {
                 moveLeft = false;
                 moveRight = false;
-                rb.position += Vector2.left * hitKnock_Back_speed * Time.deltaTime;
+                rb.position += Vector2.left * speed * Time.deltaTime;
                 yield return null;
             }
-            yield return new WaitForSeconds(hitTimer);
-            animator.SetBool("isHit", false);
+            yield return new WaitForSeconds(invincibilityTimer);
+            animator.SetBool(animationHashCode, false);
         }
         state = State.Idle;
     }
-
+    
     protected override void Movement()
     {
         if (moveLeft)
@@ -213,6 +265,7 @@ public class PlayerController : Unit
                 moveRight = false;              
             }
             state = State.Attack;
+            //ObjectPool.GetObject();
             Instantiate(firePrefab, attackPoint.position, attackPoint.rotation);
             StartCoroutine(IdleCheck());
         }
@@ -223,7 +276,7 @@ public class PlayerController : Unit
         {
             SteamiaChange(-1);
             DodgeLeft = true;
-            dodge = StartCoroutine(Dodge());
+            dodge = StartCoroutine(Invincibility_Time(dodgepos, dodgeSpeed, HashCode.dodgeID, State.Dodge));
         }
     }
     public void PointerUpDodgeLeft()
@@ -236,7 +289,7 @@ public class PlayerController : Unit
         {
             SteamiaChange(-1);
             DodgeRight = true;
-            dodge = StartCoroutine(Dodge());
+            dodge = StartCoroutine(Invincibility_Time(dodgepos, dodgeSpeed, HashCode.dodgeID, State.Dodge));
         }
     }
     public void PointerUpDodgeRight()
@@ -253,74 +306,16 @@ public class PlayerController : Unit
     }
     private IEnumerator IdleCheck()
     {
-        if (!IsGrounded())
-        {
-            while (rb.velocity.y != 0)
-            {
-                yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-            }
-        }
         if (state == State.Attack)
         {
-            animator.SetBool("isAttack", true);
+            animator.SetBool(HashCode.attackID, true);
             yield return new WaitForSeconds(0.1f);
             yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-            animator.SetBool("isAttack", false);
+            animator.SetBool(HashCode.attackID, false);
         }
         state = State.Idle;
     }
-    private IEnumerator Dodge()
-    {
-        state = State.Dodge;
-        if (DodgeRight && !animator.GetBool(hash))
-        {
-            rightDodgepos = transform.position.x + dodgepos;
-            if(rightDodgepos > maprightend)
-            {
-                rightDodgepos = maprightend;
-            }
-            if(!isFacingRight)
-            {
-                transform.Rotate(0f, 180f, 0f);
-                isFacingRight = true;
-            }
-            animator.SetBool(hash, true);
-            while (rightDodgepos - transform.position.x >= 0)
-            {
-                moveLeft = false;
-                moveRight = false;
-                rb.position += Vector2.right * dodgeSpeed * Time.deltaTime;
-                yield return null;
-            }
-            yield return new WaitForSeconds(dodgeTimer);
-            animator.SetBool("isDodge", false);
-        }
-        if (DodgeLeft && !animator.GetBool(hash))
-        {
-            leftDodgepos = transform.position.x - dodgepos;
-            if (leftDodgepos < -maprightend)
-            {
-                leftDodgepos = -maprightend;
-            }
-            if (isFacingRight)
-            {
-                transform.Rotate(0f, 180f, 0f);
-                isFacingRight = false;
-            }
 
-            animator.SetBool("isDodge", true);
-            while (leftDodgepos - transform.position.x <= 0)
-            {
-                moveLeft = false;
-                moveRight = false;
-                rb.position += Vector2.left * dodgeSpeed * Time.deltaTime;
-                yield return null;
-            }
-            yield return new WaitForSeconds(dodgeTimer);
-            animator.SetBool("isDodge", false);
-        }
-        state = State.Idle;
-    }
     private void SteamiaChange(float usingstemia)
     {
         Stemia += usingstemia;

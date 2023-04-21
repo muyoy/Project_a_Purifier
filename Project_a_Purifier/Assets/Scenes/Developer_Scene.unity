@@ -1968,6 +1968,7 @@ GameObject:
   - component: {fileID: 1249981974}
   - component: {fileID: 1249981973}
   - component: {fileID: 1249981977}
+  - component: {fileID: 1249981979}
   - component: {fileID: 1249981978}
   m_Layer: 0
   m_Name: Main_Character
@@ -2096,21 +2097,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   isDead: 0
-  isMove: 0
-  isHit: 0
   hpBar: {fileID: 867159916}
   maxHp: 100
   moveSpeed: 220
   hp: 100
   stemia: 10
-  MaxSteamia: 10
   chargeCoolTime: 5
+  jumpingPower: 15
+  mapEnd: 0
   dodgepos: 5
   dodgeSpeed: 25
+  hitpos: 0
   hitSpeed: 15000
-  rightDodgepos: 0
-  leftDodgepos: 0
-  jumpingPower: 15
   firePrefab: {fileID: 7590693140564807773, guid: 9ffc1b558b9893346aa92ffbbf4d94b0, type: 3}
   groundLayer:
     serializedVersion: 2
@@ -2136,6 +2134,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &1249981979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249981972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af9cfa4461c2ddd42987a2c8b9b2acf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolingObjectPrefab: {fileID: 7590693140564807773, guid: 9ffc1b558b9893346aa92ffbbf4d94b0, type: 3}
 --- !u!1 &1264998870
 GameObject:
   m_ObjectHideFlags: 0
