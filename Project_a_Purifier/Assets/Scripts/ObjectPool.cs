@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-   public static ObjectPool Instance;
+    public static ObjectPool Instance;
 
-    [SerializeField]
-    private GameObject poolingObjectPrefab;
+    public GameObject poolingObjectPrefab;
 
-    Queue<Bullet> poolingObjectQueue = new Queue<Bullet>();
+    Queue<GameObject> poolingObjectQueue = new Queue<GameObject>();
 
     private void Awake()
     {
@@ -26,21 +25,21 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
-    private Bullet CreateNewObject()
+    private GameObject CreateNewObject()
     {
-        var newObj = Instantiate(poolingObjectPrefab).GetComponent<Bullet>();
+        GameObject newObj = Instantiate(poolingObjectPrefab);
         newObj.gameObject.SetActive(false);
         newObj.transform.SetParent(transform);
         return newObj;
     }
 
-    public static Bullet GetObject()
+    public static GameObject GetObject()
     {
         if(Instance.poolingObjectQueue.Count > 0)
         {
             var obj = Instance.poolingObjectQueue.Dequeue();
-            obj.transform.SetParent(null);
             obj.gameObject.SetActive(true);
+            obj.transform.SetParent(null);
             return obj;
         }
         else
@@ -52,7 +51,7 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
-    public static void ReturnObject(Bullet obj)
+    public static void ReturnObject(GameObject obj)
     {
         obj.gameObject.SetActive(false);
         obj.transform.SetParent(Instance.transform);

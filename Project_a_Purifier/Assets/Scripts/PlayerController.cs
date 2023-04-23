@@ -20,6 +20,9 @@ public class PlayerController : Unit
         }
     }
     private float maxSteamia = 10;
+    private float reloadCount = 10;
+    private float currnetReloadCount;
+    private float reloadTime = 2.0f;
     public float chargeCoolTime;    //test
     public float jumpingPower;      //test
     public float mapEnd;      //test
@@ -41,6 +44,7 @@ public class PlayerController : Unit
     private Transform groundcheck;
     private Coroutine dodge = null;
     private Coroutine charge = null;
+    private Coroutine reload = null;
     private Coroutine hit = null;
 
     public GameObject firePrefab;
@@ -52,6 +56,7 @@ public class PlayerController : Unit
         base.Start();
         hpBar.value = hp / maxHp;
         steamiabar.value = stemia / maxSteamia;
+        currnetReloadCount = reloadCount;
         groundcheck = transform.GetChild(0).GetComponent<Transform>();
         attackPoint = transform.GetChild(1).GetComponent<Transform>();
     }
@@ -264,11 +269,37 @@ public class PlayerController : Unit
                 moveLeft = false;
                 moveRight = false;              
             }
-            state = State.Attack;
-            //ObjectPool.GetObject();
-            Instantiate(firePrefab, attackPoint.position, attackPoint.rotation);
-            StartCoroutine(IdleCheck());
+            Attack();
         }
+    }
+    private void Attack()
+    {
+        if (currnetReloadCount > 0)
+        {
+            state = State.Attack;
+            StartCoroutine(IdleCheck());
+
+            currnetReloadCount -= 1;
+            firePrefab = ObjectPool.GetObject();
+            firePrefab.transform.position = attackPoint.position;
+            firePrefab.GetComponent<Rigidbody2D>().velocity = transform.right * 20.0f;
+            //일정거리 이동하고 사라지는 알고리즘
+        }
+        else
+        {
+            if (reload == null)
+            {
+                Debug.Log("장전중");
+                reload = StartCoroutine(ReloadTime());
+            }
+        }
+    }
+
+    private IEnumerator ReloadTime()
+    {
+        yield return new WaitForSeconds(reloadTime);
+        currnetReloadCount = reloadCount;
+        reload = null;
     }
     public void PointerDownDodgeLeft()
     {
