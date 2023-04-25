@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private void Start()
+    public void Shoot(float shootTime)
     {
-        Invoke("DestroyBullet", 5f);
+        Invoke("DestroyBullet", shootTime);
     }
 
     public void DestroyBullet()

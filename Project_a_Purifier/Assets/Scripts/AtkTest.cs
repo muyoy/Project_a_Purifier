@@ -6,6 +6,6 @@ public class AtkTest : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Unit>().HpChange(10);
+        collision.gameObject.GetComponent<Unit>().HpChange(1);
     }
 }

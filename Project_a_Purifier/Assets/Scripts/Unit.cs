@@ -13,7 +13,7 @@ public class Unit : MonoBehaviour
     protected Rigidbody2D rb;
     protected Animator animator;
     [SerializeField] protected Slider hpBar;         //hp UI
-    [SerializeField] protected float maxHp = 100.0f; //test 때문에 시리얼라이즈필드함
+    protected float maxHp;
     protected float horizon; 
     [SerializeField] protected float moveSpeed = 0.0f; 
 
@@ -38,6 +38,7 @@ public class Unit : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
+
     public virtual void HpChange(float damage)
     {
 
@@ -45,7 +46,9 @@ public class Unit : MonoBehaviour
 
     protected virtual void Init()
     {
-
+        hp = GameManager.instance.cha_Hp;
+        maxHp = GameManager.instance.cha_Hp;
+        moveSpeed = GameManager.instance.move_Speed * 20.0f;
     }
 
     protected virtual void Movement()

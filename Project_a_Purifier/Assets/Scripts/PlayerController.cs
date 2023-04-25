@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Pool;
+using TMPro;
 
 public class PlayerController : Unit
 {
-    [SerializeField] protected float stemia; //공격 오브젝트풀링 제작
+    [SerializeField] protected float stemia;
     protected virtual float Stemia
     {
         get { return stemia; }
@@ -19,20 +19,20 @@ public class PlayerController : Unit
             }
         }
     }
-    private float maxSteamia = 10;
+    private float maxSteamia;
     private float reloadCount = 10;
     private float currnetReloadCount;
     private float reloadTime = 2.0f;
-    public float chargeCoolTime;    //test
-    public float jumpingPower;      //test
-    public float mapEnd;      //test
+    private float chargeCoolTime = 5.0f;
+    private const float jumpingPower = 12.5f;
+    private float mapEnd = 19.0f;
 
-    public float dodgepos;
+    private const float dodgepos = 3.6f;
     public float dodgeSpeed;
-    public float hitpos;
+    private const float hitpos = 1.8f;
     public float hitSpeed;
 
-    private const float invincibilityTimer = 1.0f;
+    private float invincibilityTimer = 1.0f;
 
     private bool moveLeft = false;
     private bool moveRight = false;
@@ -50,13 +50,16 @@ public class PlayerController : Unit
     public GameObject firePrefab;
     public LayerMask groundLayer;
     public Slider steamiabar;
+    public TextMeshProUGUI bulletText;
 
     protected override void Start()
     {
         base.Start();
+        Init();
         hpBar.value = hp / maxHp;
         steamiabar.value = stemia / maxSteamia;
         currnetReloadCount = reloadCount;
+        bulletText.text = currnetReloadCount.ToString();
         groundcheck = transform.GetChild(0).GetComponent<Transform>();
         attackPoint = transform.GetChild(1).GetComponent<Transform>();
     }
@@ -89,6 +92,13 @@ public class PlayerController : Unit
             hit = StartCoroutine(Invincibility_Time(hitpos, hitSpeed, HashCode.hitID, State.Hit));
         }
     }
+
+    protected override void Init()
+    {
+        base.Init();
+        maxSteamia = GameManager.instance.cha_St;
+        stemia = GameManager.instance.cha_St;
+    }
     public override void HpChange(float damage)
     {
         if (!isDead && !(state == State.Dodge) && !(state == State.Hit))
@@ -110,6 +120,7 @@ public class PlayerController : Unit
         if (changeState == State.Dodge)
         {
             state = State.Dodge;
+            invincibilityTimer = 1.0f;
             if (DodgeRight)
             {
                 if(!isFacingRight)
@@ -140,6 +151,7 @@ public class PlayerController : Unit
         else if(changeState == State.Hit)
         {
             state = State.Hit;
+            invincibilityTimer = 1.5f;
             if (!isFacingRight)
             {
                 isRight = true;
@@ -278,19 +290,20 @@ public class PlayerController : Unit
         {
             state = State.Attack;
             StartCoroutine(IdleCheck());
-
             currnetReloadCount -= 1;
+            bulletText.text = currnetReloadCount.ToString();
             firePrefab = ObjectPool.GetObject();
             firePrefab.transform.position = attackPoint.position;
             firePrefab.GetComponent<Rigidbody2D>().velocity = transform.right * 20.0f;
-            //일정거리 이동하고 사라지는 알고리즘
-        }
-        else
-        {
-            if (reload == null)
+            firePrefab.GetComponent<Bullet>().Shoot(0.4f);
+
+            if (currnetReloadCount == 0)
             {
-                Debug.Log("장전중");
-                reload = StartCoroutine(ReloadTime());
+                bulletText.text = "Reload..";
+                if (reload == null)
+                {
+                    reload = StartCoroutine(ReloadTime());
+                }
             }
         }
     }
@@ -299,6 +312,7 @@ public class PlayerController : Unit
     {
         yield return new WaitForSeconds(reloadTime);
         currnetReloadCount = reloadCount;
+        bulletText.text = currnetReloadCount.ToString();
         reload = null;
     }
     public void PointerDownDodgeLeft()
@@ -332,7 +346,7 @@ public class PlayerController : Unit
         while(!isDead && !isfullCharge)
         {
             yield return new WaitForSeconds(chargeCoolTime);
-            SteamiaChange(1);
+            SteamiaChange(GameManager.instance.cha_St_Reg);
         }
     }
     private IEnumerator IdleCheck()
@@ -377,6 +391,7 @@ public class PlayerController : Unit
         {
             isFacingRight = !isFacingRight;
             transform.Rotate(0f, 180f, 0f);
+            bulletText.rectTransform.Rotate(0f, 180f, 0f);
         }
     }
 }
