@@ -18,8 +18,8 @@ TagManager:
   - Monster
   - ForntHit
   - BackHit
-  - 
-  - 
+  - bullet
+  - HitBox
   - 
   - 
   - 

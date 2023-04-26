@@ -56,12 +56,9 @@ public class PlayerController : Unit
     {
         base.Start();
         Init();
-        hpBar.value = hp / maxHp;
-        steamiabar.value = stemia / maxSteamia;
-        currnetReloadCount = reloadCount;
-        bulletText.text = currnetReloadCount.ToString();
         groundcheck = transform.GetChild(0).GetComponent<Transform>();
         attackPoint = transform.GetChild(1).GetComponent<Transform>();
+        target = GameObject.FindGameObjectWithTag("Monster");
     }
     private void FixedUpdate()
     {
@@ -98,6 +95,10 @@ public class PlayerController : Unit
         base.Init();
         maxSteamia = GameManager.instance.cha_St;
         stemia = GameManager.instance.cha_St;
+        hpBar.value = hp / maxHp;
+        steamiabar.value = stemia / maxSteamia;
+        currnetReloadCount = reloadCount;
+        bulletText.text = currnetReloadCount.ToString();
     }
     public override void HpChange(float damage)
     {
@@ -123,29 +124,31 @@ public class PlayerController : Unit
             invincibilityTimer = 1.0f;
             if (DodgeRight)
             {
-                if(!isFacingRight)
-                {
-                    transform.Rotate(0f, 180f, 0f);
-                    isFacingRight = true;
-                    isRight = true;
-                }
-                else
-                {
-                    isRight = true;
-                }
+                isRight = true;
+                //if (!isFacingRight)
+                //{
+                //    transform.Rotate(0f, 180f, 0f);
+                //    isFacingRight = true;
+                //    isRight = true;
+                //}
+                //else
+                //{
+                //    isRight = true;
+                //}
             }
-            else if(DodgeLeft)
+            else if (DodgeLeft)
             {
-                if (isFacingRight)
-                {
-                    transform.Rotate(0f, 180f, 0f);
-                    isFacingRight = false;
-                    isRight = false;
-                }
-                else
-                {
-                    isRight = false;
-                }
+                isRight = false;
+                //if (isFacingRight)
+                //{
+                //    transform.Rotate(0f, 180f, 0f);
+                //    isFacingRight = false;
+                //    isRight = false;
+                //}
+                //else
+                //{
+                //    isRight = false;
+                //}
             }
         }
         else if(changeState == State.Hit)
@@ -387,11 +390,17 @@ public class PlayerController : Unit
     }
     private void Filp()
     {
-        if (isFacingRight && horizon < 0f || !isFacingRight && horizon > 0f)
+        if(isFacingRight && transform.position.x > target.transform.position.x || !isFacingRight && transform.position.x < target.transform.position.x)
         {
             isFacingRight = !isFacingRight;
             transform.Rotate(0f, 180f, 0f);
             bulletText.rectTransform.Rotate(0f, 180f, 0f);
         }
+        //if (isFacingRight && horizon < 0f || !isFacingRight && horizon > 0f)
+        //{
+        //    isFacingRight = !isFacingRight;
+        //    transform.Rotate(0f, 180f, 0f);
+        //    bulletText.rectTransform.Rotate(0f, 180f, 0f);
+        //}
     }
 }
