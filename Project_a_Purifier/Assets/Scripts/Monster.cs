@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Monster : Unit
 {
-    //public GameObject[] longAttacks;
-    [SerializeField] public List<GameObject[]> longAttacks = new List<GameObject[]>();
+    public GameObject[] longAttacks;
+    public GameObject[] dmgTMP;
+    private int count = 0;
     private Coroutine chase = null;
     private bool isCloseAttack = false;
     private const float closeAttackRange = 4.5f;
@@ -24,6 +25,10 @@ public class Monster : Unit
         {
             Hp -= damage;
         }
+        StartCoroutine(dmgTMP[count].GetComponent<DmgEffect>().Dmg(damage));
+        ++count;
+        if (count >= dmgTMP.Length)
+            count = 0;
     }
 
     protected override void Movement()
@@ -84,6 +89,10 @@ public class Monster : Unit
             state = State.Attack;
             AttackDetecting(target.transform.position.x);
         }
+        else
+        {
+            Movement();
+        }
     }
     private void AttackDetecting(float targetPosition)
     {
@@ -104,28 +113,38 @@ public class Monster : Unit
         else
         {
             StartCoroutine(IdleCheck(HashCode.longAttackID));
-            if (targetPosition - transform.position.x > 0)
-            {
-                //longAttacks[1].gameObject.SetActive(true);
-                //longAttacks[1].GetComponentInChildren<Monster_CloseAttack>().AnimationSetActive();
-            }
-            else
-            {
-                //longAttacks[0].gameObject.SetActive(true);
-                //longAttacks[0].GetComponentInChildren<Monster_CloseAttack>().AnimationSetActive();
-            }
         }
     }
 
     private IEnumerator IdleCheck(int _attackID)
     {
-        if (state == State.Attack)
+        if (state == State.Attack && isCloseAttack)
         {
             animator.SetBool(_attackID, true);
             yield return new WaitForSeconds(0.1f);
             yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
             animator.SetBool(_attackID, false);
         }
+
+        if (state == State.Attack && !isCloseAttack)
+        {
+            animator.SetBool(_attackID, true);
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+            animator.SetBool(_attackID, false);
+            if (target.transform.position.x - transform.position.x > 0)
+            {
+                longAttacks[1].gameObject.SetActive(true);
+                longAttacks[1].GetComponent<Monster_LongAttack>().AnimationSetActive();
+            }
+            else
+            {
+                longAttacks[0].gameObject.SetActive(true);
+                longAttacks[0].GetComponent<Monster_LongAttack>().AnimationSetActive();
+            }
+        }
         state = State.Idle;
+        yield return new WaitForSeconds(1.0f);
+        Movement();
     }
 }
