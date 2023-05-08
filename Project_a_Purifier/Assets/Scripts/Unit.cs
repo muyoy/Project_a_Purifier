@@ -5,13 +5,12 @@ using UnityEngine.UI;
 
 public class Unit : MonoBehaviour
 {
-    public enum State { Idle, Move, Attack, Hit, Death, Dodge, Jump }
+    public enum State { Idle, Move, Attack, Hit, Death, Dodge, Jump, Invincibility }
     public State state;
     public bool isDead;
     protected bool isFacingRight = true;
     protected GameObject target = null;
     protected Rigidbody2D rb;
-    protected Animator animator;
     [SerializeField] protected Slider hpBar;         //hp UI
     protected float maxHp;
     protected float horizon; 
@@ -36,7 +35,6 @@ public class Unit : MonoBehaviour
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
     }
 
     public virtual void HpChange(float damage)
@@ -59,6 +57,5 @@ public class Unit : MonoBehaviour
     protected virtual void Dead()
     {
         isDead = true;
-        animator.SetBool(HashCode.deadID, true);
     }
 }

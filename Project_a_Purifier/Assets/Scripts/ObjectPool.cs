@@ -30,7 +30,6 @@ public class ObjectPool : MonoBehaviour
         GameObject newObj = Instantiate(poolingObjectPrefab);
         newObj.gameObject.SetActive(false);
         newObj.transform.SetParent(transform);
-        newObj.GetComponent<Bullet>().SetAtk(GameManager.instance.cha_Atk);
         return newObj;
     }
 
@@ -39,6 +38,7 @@ public class ObjectPool : MonoBehaviour
         if(Instance.poolingObjectQueue.Count > 0)
         {
             var obj = Instance.poolingObjectQueue.Dequeue();
+            obj.GetComponent<Bullet>().SetAtk(GameManager.instance.cha_Atk);
             obj.gameObject.SetActive(true);
             obj.transform.SetParent(null);
             return obj;

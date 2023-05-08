@@ -15,10 +15,23 @@ MonoBehaviour:
   atlasAssets:
   - {fileID: 11400000, guid: eb5911db53acf8745965ab7e7c8f882a, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: 5877fb298aa02c7428d2810a23d86e12, type: 3}
+  skeletonJSON: {fileID: 11500000, guid: 6e3e95a05e4c9774397eeeb7bdee8ccb, type: 3}
+  isUpgradingBlendModeMaterials: 0
+  blendModeMaterials:
+    requiresBlendModeMaterials: 0
+    applyAdditiveMaterial: 0
+    additiveMaterials: []
+    multiplyMaterials: []
+    screenMaterials: []
   skeletonDataModifiers: []
-  fromAnimation: []
-  toAnimation: []
-  duration: []
+  fromAnimation:
+  - Jump
+  - Jump_Landing
+  toAnimation:
+  - Jump_Landing
+  - Idle_1
+  duration:
+  - 0
+  - 0
   defaultMix: 0.2
-  controller: {fileID: 0}
+  controller: {fileID: 9100000, guid: 0e21fdb02cdba004b93b39b4c13ced0b, type: 2}

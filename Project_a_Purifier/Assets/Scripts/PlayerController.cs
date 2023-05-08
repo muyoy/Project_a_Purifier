@@ -42,6 +42,7 @@ public class PlayerController : Unit
 
     private Transform attackPoint;
     private Transform groundcheck;
+    private Animator animator;
     private Coroutine dodge = null;
     private Coroutine charge = null;
     private Coroutine reload = null;
@@ -56,6 +57,7 @@ public class PlayerController : Unit
     {
         base.Start();
         Init();
+        animator = GetComponent<Animator>();
         groundcheck = transform.GetChild(0).GetComponent<Transform>();
         attackPoint = transform.GetChild(1).GetComponent<Transform>();
         target = GameObject.FindGameObjectWithTag("Monster");
@@ -111,6 +113,12 @@ public class PlayerController : Unit
                 hit = StartCoroutine(Invincibility_Time(hitpos, hitSpeed, HashCode.hitID, State.Hit));
             }
         }
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        animator.SetBool(HashCode.deadID, true);
     }
 
     private IEnumerator Invincibility_Time(float position, float speed, int animationHashCode, State changeState)

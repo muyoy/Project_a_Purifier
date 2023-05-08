@@ -6,6 +6,7 @@ public class Monster : Unit
 {
     public GameObject[] longAttacks;
     public GameObject[] dmgTMP;
+    private Animator animator;
     private int count = 0;
     private Coroutine chase = null;
     private bool isCloseAttack = false;
@@ -16,6 +17,7 @@ public class Monster : Unit
         base.Start();
         isFacingRight = false;
         target = GameObject.FindGameObjectWithTag("Player");
+        animator = GetComponent<Animator>();
         chase = StartCoroutine(Chase());
     }
     public override void HpChange(float damage)
@@ -29,6 +31,12 @@ public class Monster : Unit
         ++count;
         if (count >= dmgTMP.Length)
             count = 0;
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        animator.SetBool(HashCode.deadID, true);
     }
 
     protected override void Movement()
@@ -73,6 +81,10 @@ public class Monster : Unit
         {
             isFacingRight = !isFacingRight;
             transform.Rotate(0f, 180f, 0f);
+            for(int i = 0; i < dmgTMP.Length; i++)
+            {
+                dmgTMP[i].transform.Rotate(0f, 180f, 0f);
+            }
         }
     }
     private void Attack(float targetPosition)
@@ -144,7 +156,7 @@ public class Monster : Unit
             }
         }
         state = State.Idle;
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.5f);
         Movement();
     }
 }
