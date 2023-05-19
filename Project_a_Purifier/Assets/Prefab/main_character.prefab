@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 925708522062113415}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.62, y: -6.74, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 925708523712603756}
@@ -187,7 +187,7 @@ MonoBehaviour:
   Set_weapon: 0
   dodgeSpeed: 25
   hitSpeed: 30
-  firePrefab: {fileID: 7590693140564807773, guid: 9ffc1b558b9893346aa92ffbbf4d94b0, type: 3}
+  firePrefab: {fileID: 3696307426324330443, guid: 5acda319a25146742a2aab3788b14871, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af9cfa4461c2ddd42987a2c8b9b2acf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolingObjectPrefab: {fileID: 7590693140564807773, guid: 9ffc1b558b9893346aa92ffbbf4d94b0, type: 3}
+  poolingObjectPrefab: {fileID: 3696307426324330443, guid: 5acda319a25146742a2aab3788b14871, type: 3}
 --- !u!1 &925708522651434428
 GameObject:
   m_ObjectHideFlags: 0
