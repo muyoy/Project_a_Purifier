@@ -1,0 +1,2 @@
+gold, dia, playcount
+50, 100, 5

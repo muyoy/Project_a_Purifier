@@ -46,7 +46,7 @@ public class Unit : MonoBehaviour
     {
         hp = GameManager.instance.cha_Hp;
         maxHp = GameManager.instance.cha_Hp;
-        moveSpeed = GameManager.instance.move_Speed * 20.0f;
+        moveSpeed = GameManager.instance.move_Speed * 5;
     }
 
     protected virtual void Movement()

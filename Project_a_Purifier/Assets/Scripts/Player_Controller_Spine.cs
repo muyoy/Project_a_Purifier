@@ -71,7 +71,7 @@ public class Player_Controller_Spine : Unit
     private float reloadTime = 2.0f;
     private float chargeCoolTime = 5.0f;
     private const float jumpingPower = 12.5f;
-    private float mapEnd = 19.0f;
+    private float mapEnd = 5.5f;
 
     private const float dodgepos = 3.6f;
     public float dodgeSpeed;
