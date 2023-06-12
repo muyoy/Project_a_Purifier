@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     private float atk = 0;
+    private float powerlessFigure = 2.0f;
 
     public void SetAtk(float _atk)
     {
@@ -21,6 +22,9 @@ public class Bullet : MonoBehaviour
             other.gameObject.GetComponentInParent<Monster>().HpChange(atk * 1.2f);
         else if (other.gameObject.layer == 10)
             other.gameObject.GetComponentInParent<Monster>().HpChange(atk * 0.8f);
+
+        other.gameObject.GetComponentInParent<Monster>().PowerlessChange(powerlessFigure);
+
         DestroyBullet();
     }
 

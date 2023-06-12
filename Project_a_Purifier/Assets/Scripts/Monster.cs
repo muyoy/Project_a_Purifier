@@ -1,21 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Monster : Unit
 {
     public GameObject[] longAttacks;
     public GameObject[] dmgTMP;
+    public Slider hpBar;
+    public Slider powerlessBar;
+    public float bossMaxHp;
+    public float bossMaxPowerless = 100.0f;
     private Animator animator;
     private int count = 0;
     private Coroutine chase = null;
     private bool isCloseAttack = false;
     private const float closeAttackRange = 4.5f;
     private const float longAttackRange = 13.5f;
+
+    [SerializeField] protected float bossPowerless;
+    protected virtual float BossPowerless
+    {
+        get { return bossPowerless; }
+        set
+        {
+            bossPowerless = value;
+
+            if (!isDead && bossPowerless <= 0)
+            {
+                Debug.Log("¹«·ÂÈ­");
+            }
+        }
+    }
     protected override void Start()
     {
         base.Start();
         isFacingRight = false;
+        bossMaxHp = 1000.0f;
+        BossPowerless = bossMaxPowerless;
+        hpBar.value = Hp / bossMaxHp;
+        powerlessBar.value = BossPowerless / bossMaxPowerless;
         target = GameObject.FindGameObjectWithTag("Player");
         animator = GetComponent<Animator>();
         chase = StartCoroutine(Chase());
@@ -26,11 +49,21 @@ public class Monster : Unit
         if (!isDead)
         {
             Hp -= damage;
+            hpBar.value = Hp / bossMaxHp;
         }
         StartCoroutine(dmgTMP[count].GetComponent<DmgEffect>().Dmg(damage));
         ++count;
         if (count >= dmgTMP.Length)
             count = 0;
+    }
+
+    public void PowerlessChange(float powerlessFigure)
+    {
+        if (!isDead)
+        {
+            BossPowerless -= powerlessFigure;
+            powerlessBar.value = BossPowerless / bossMaxPowerless;
+        }
     }
 
     protected override void Dead()

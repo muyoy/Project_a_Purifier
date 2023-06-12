@@ -394,7 +394,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   isDead: 0
-  hpBar: {fileID: 0}
   moveSpeed: 10
   hp: 1000
   longAttacks:
@@ -404,6 +403,11 @@ MonoBehaviour:
   - {fileID: 467250319}
   - {fileID: 105032402}
   - {fileID: 953991776}
+  hpBar: {fileID: 1596673589}
+  powerlessBar: {fileID: 1748819514}
+  bossMaxHp: 0
+  bossMaxPowerless: 100
+  bossPowerless: 0
 --- !u!70 &138586263
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -4441,7 +4445,7 @@ GameObject:
   - component: {fileID: 1596673588}
   - component: {fileID: 1596673589}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: BossHp_Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4772,7 +4776,7 @@ GameObject:
   - component: {fileID: 1748819513}
   - component: {fileID: 1748819514}
   m_Layer: 5
-  m_Name: Slider (1)
+  m_Name: BossPowerless_Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
