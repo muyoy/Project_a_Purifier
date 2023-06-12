@@ -7,8 +7,8 @@ using TMPro;
 
 public class Player_Controller_Spine : Unit
 {
-    [SerializeField] protected float stemia;
-    protected virtual float Stemia
+    [SerializeField] protected int stemia;
+    protected virtual int Stemia
     {
         get { return stemia; }
         set
@@ -65,17 +65,18 @@ public class Player_Controller_Spine : Unit
     }
     public Animation Set_Animation;
     public weapon Set_weapon;
-    private float maxSteamia;
+    private int maxSteamia;
+    private int stemiaCount;
     private float reloadCount = 10;
     private float currnetReloadCount;
     private float reloadTime = 2.0f;
     private float chargeCoolTime = 5.0f;
-    private const float jumpingPower = 12.5f;
+    private const float jumpingPower = 7.0f;
     private float mapEnd = 5.5f;
 
-    private const float dodgepos = 3.6f;
+    private const float dodgepos = 1.6f;
     public float dodgeSpeed;
-    private const float hitpos = 1.8f;
+    private const float hitpos = 0.8f;
     public float hitSpeed;
 
     private float invincibilityTimer = 1.0f;
@@ -97,7 +98,8 @@ public class Player_Controller_Spine : Unit
 
     public GameObject firePrefab;
     public LayerMask groundLayer;
-    public Slider steamiabar;
+    private CreateUIObjcet stemiaObj;
+    private CreateUIObjcet hpObj;
     public TextMeshProUGUI bulletText;
 
     protected override void Start()
@@ -108,6 +110,8 @@ public class Player_Controller_Spine : Unit
         groundcheck = transform.GetChild(0).GetComponent<Transform>();
         attackPoint = transform.GetChild(1).GetComponent<Transform>();
         target = GameObject.FindGameObjectWithTag("Monster");
+        stemiaObj = GameObject.FindGameObjectWithTag("StemiaUI").GetComponent<CreateUIObjcet>();
+        hpObj = GameObject.FindGameObjectWithTag("HpUI").GetComponent<CreateUIObjcet>();
         ChangeAnimation(0, Animation.Idle_1.ToString(), true);
         SetWeapon(weapon.Angel_Archer_Weapon.ToString());
     }
@@ -120,7 +124,7 @@ public class Player_Controller_Spine : Unit
             rb.velocity = new Vector2(horizon * Time.deltaTime, rb.velocity.y);
         }
 
-        if (hp < 0)
+        if (hp <= 0)
         {
             state = State.Death;
             rb.velocity = Vector2.zero;
@@ -140,8 +144,7 @@ public class Player_Controller_Spine : Unit
         base.Init();
         maxSteamia = GameManager.instance.cha_St;
         stemia = GameManager.instance.cha_St;
-        hpBar.value = hp / maxHp;
-        steamiabar.value = stemia / maxSteamia;
+        stemiaCount = maxSteamia - 1;
         currnetReloadCount = reloadCount;
         bulletText.text = currnetReloadCount.ToString();
     }
@@ -150,8 +153,8 @@ public class Player_Controller_Spine : Unit
         if (!isDead && !(state == State.Dodge) && !(state == State.Hit) && !(state == State.Invincibility))
         {
             Hp -= damage;
-            hpBar.value = hp / maxHp;
-            if (hp > 0)
+            hpObj.ObjectList[(int)Hp].gameObject.SetActive(false);
+            if (hp >= 0)
             {
                 hit = StartCoroutine(Invincibility_Time(hitpos, hitSpeed, Animation.Hit.ToString(), State.Hit));
             }
@@ -235,6 +238,12 @@ public class Player_Controller_Spine : Unit
             ChangeAnimation(0, Animation.Idle_1.ToString(), true);
         }
         state = State.Invincibility;
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        ChangeAnimation(0, Animation.Die_1.ToString(), false);
     }
 
     protected override void Movement()
@@ -411,10 +420,23 @@ public class Player_Controller_Spine : Unit
         ChangeAnimation(0, Animation.Idle_1.ToString(), true);
     }
 
-    private void SteamiaChange(float usingstemia)
+    private void SteamiaChange(int usingstemia)
     {
-        Stemia += usingstemia;
-        steamiabar.value = stemia / maxSteamia;
+        bool use;
+        if(usingstemia < 0)
+        {
+            Stemia += usingstemia;
+            use = false;
+            stemiaObj.ObjectList[Stemia].gameObject.SetActive(use);
+        }
+        else
+        {
+            Stemia += usingstemia;
+            stemiaCount = Stemia - 1;
+            use = true;
+            stemiaObj.ObjectList[stemiaCount].gameObject.SetActive(use);
+        }
+
         if (stemia >= maxSteamia)
         {
             isfullCharge = true;

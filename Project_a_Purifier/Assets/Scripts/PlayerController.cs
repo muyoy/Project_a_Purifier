@@ -97,7 +97,7 @@ public class PlayerController : Unit
         base.Init();
         maxSteamia = GameManager.instance.cha_St;
         stemia = GameManager.instance.cha_St;
-        hpBar.value = hp / maxHp;
+        //hpBar.value = hp / maxHp;
         steamiabar.value = stemia / maxSteamia;
         currnetReloadCount = reloadCount;
         bulletText.text = currnetReloadCount.ToString();
@@ -107,7 +107,7 @@ public class PlayerController : Unit
         if (!isDead && !(state == State.Dodge) && !(state == State.Hit))
         {
             Hp -= damage;
-            hpBar.value = hp / maxHp;
+            //hpBar.value = hp / maxHp;
             if(hp > 0)
             {
                 hit = StartCoroutine(Invincibility_Time(hitpos, hitSpeed, HashCode.hitID, State.Hit));

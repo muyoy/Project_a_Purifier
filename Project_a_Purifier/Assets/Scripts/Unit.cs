@@ -11,7 +11,6 @@ public class Unit : MonoBehaviour
     protected bool isFacingRight = true;
     protected GameObject target = null;
     protected Rigidbody2D rb;
-    [SerializeField] protected Slider hpBar;         //hp UI
     protected float maxHp;
     protected float horizon; 
     [SerializeField] protected float moveSpeed = 0.0f; 
@@ -26,7 +25,6 @@ public class Unit : MonoBehaviour
 
             if(!isDead && hp <= 0)
             {
-                hp = -1;
                 Dead();
             }
         }

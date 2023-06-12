@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
     #region TestData
     public string user_ID;
-    public float cha_Hp;
-    public float cha_St;
+    public int cha_Hp;
+    public int cha_St;
     public int cha_St_Reg;
     public float cha_Atk;
     public float cri_Chan;
@@ -23,8 +23,8 @@ public class GameManager : MonoBehaviour
     public void CharacherData()
     {
         user_ID = null;
-        cha_Hp = 10.0f;
-        cha_St = 10.0f;
+        cha_Hp = 10;
+        cha_St = 10;
         cha_St_Reg = 1;
         cha_Atk = 10.0f;
         cri_Chan = 10.0f;
