@@ -6,6 +6,7 @@ public class Monster : Unit
 {
     public GameObject[] longAttacks;
     public GameObject[] dmgTMP;
+    public GameObject stun;
     public Slider hpBar;
     public Slider powerlessBar;
     public float bossMaxHp;
@@ -13,6 +14,7 @@ public class Monster : Unit
     private Animator animator;
     private int count = 0;
     private Coroutine chase = null;
+    private Coroutine powerlessState = null;
     private bool isCloseAttack = false;
     private const float closeAttackRange = 4.5f;
     private const float longAttackRange = 13.5f;
@@ -27,7 +29,8 @@ public class Monster : Unit
 
             if (!isDead && bossPowerless <= 0)
             {
-                Debug.Log("¹«·ÂÈ­");
+                StopAllCoroutines();
+                powerlessState = StartCoroutine(PowerLess());
             }
         }
     }
@@ -75,6 +78,21 @@ public class Monster : Unit
     protected override void Movement()
     {
         chase = StartCoroutine(Chase());
+    }
+
+    private IEnumerator PowerLess()
+    {
+        if(state != State.Hit)
+        {
+            chase = null;
+            stun.gameObject.SetActive(true);
+            state = State.Hit;
+            rb.velocity = Vector3.zero;
+        }
+        yield return new WaitForSeconds(5.0f);
+        stun.gameObject.SetActive(false);
+        BossPowerless = bossMaxPowerless;
+        Movement();
     }
 
     private IEnumerator Chase()
