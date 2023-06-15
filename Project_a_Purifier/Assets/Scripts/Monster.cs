@@ -16,8 +16,8 @@ public class Monster : Unit
     private Coroutine chase = null;
     private Coroutine powerlessState = null;
     private bool isCloseAttack = false;
-    private const float closeAttackRange = 4.5f;
-    private const float longAttackRange = 13.5f;
+    private const float closeAttackRange = 1.8f;
+    private const float longAttackRange = 3.6f;
 
     [SerializeField] protected float bossPowerless;
     protected virtual float BossPowerless
@@ -99,7 +99,7 @@ public class Monster : Unit
     {
         state = State.Move;
         float chasingPoint = target.transform.position.x;
-        if (chasingPoint - transform.position.x >= 0)
+        if (chasingPoint - transform.position.x >= 0.4)
         {
             horizon = 1;
             animator.SetFloat(HashCode.moveID,Mathf.Abs(horizon));
@@ -115,7 +115,7 @@ public class Monster : Unit
             horizon = -1;
             animator.SetFloat(HashCode.moveID, Mathf.Abs(horizon));
             Filp();
-            while (chasingPoint - transform.position.x <= 0)
+            while (chasingPoint - transform.position.x <= -0.4)
             {
                 rb.position += Vector2.left * Time.deltaTime;
                 yield return null;

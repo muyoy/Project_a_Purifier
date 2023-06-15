@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
 
     public void TestSceneReset()
     {
-        SceneManager.LoadScene("Developer_Scene");
+        //SceneManager.LoadScene("Developer_Scene");
+        SceneManager.LoadScene(0);
     }
     #endregion
     private void Awake()
